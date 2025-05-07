@@ -1,0 +1,32 @@
+.chatbot {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.user {
+  background-color: #DCF8C6;
+  align-self: flex-end;
+  border-radius: 8px 4px 8px 8px;
+}
+
+.bot {
+  background-color: #ECECEC;
+  align-self: flex-start;
+  border-radius: 4px 8px 8px 8px;
+}
+
+.chat-message {
+  padding: 0.5rem 1rem;
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+#chat-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+  .chat-message {
+    font-size: 1rem;
+  }
+}
