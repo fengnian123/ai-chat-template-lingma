@@ -6,7 +6,7 @@ from functools import partial
 # 魔搭社区API配置
 API_BASE_URL = 'https://api-inference.modelscope.cn/v1/'
 MODEL_ID = 'Qwen/Qwen3-235B-A22B'
-API_KEY = os.getenv('MODELSCOPE_API_KEY', '')  # 从环境变量获取API密钥
+API_KEY = '9b16f530-adcd-4711-a998-20e070d1265d'
 
 # 初始化OpenAI客户端
 client = openai.OpenAI(
@@ -15,12 +15,12 @@ client = openai.OpenAI(
 )
 
 # 自定义CSS样式
-custom_css = ".chatbot {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
+custom_css = """ .chatbot {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
 .user {background-color: #DCF8C6; align-self: flex-end; border-radius: 8px 4px 8px 8px;}
 .bot {background-color: #ECECEC; align-self: flex-start; border-radius: 4px 8px 8px 8px;}
 .chat-message {padding: 0.5rem 1rem; margin: 0.5rem 0; font-size: 1.1rem;}
 #chat-container {max-width: 800px; margin: 0 auto;}
-@media (max-width: 600px) {.chat-message {font-size: 1rem;}}"
+@media (max-width: 600px) {.chat-message {font-size: 1rem;}} """
 
 
 def format_response(response):
@@ -44,17 +44,21 @@ def format_response(response):
     }
 
 
-def chatbot_response(message, chat_history):
+def chatbot_response(message, chat_history, api_key=None):
     """处理用户消息并返回AI回复
     
     Args:
         message: 用户输入文本
         chat_history: 历史对话记录
+        api_key: ModelScope API密钥（可选）
     
     Returns:
         AI回复内容
     """
     try:
+        # 使用传入的API密钥或环境变量中的密钥
+        effective_api_key = api_key if api_key else API_KEY
+        
         # 构建API请求参数
         extra_body = {
             "enable_thinking": True,
@@ -99,16 +103,16 @@ def main():
     # 创建Gradio界面
     with gr.Blocks(theme=gr.themes.Default(), css=custom_css) as demo:
         gr.Markdown("# 🤖 AI Chat Template")
-        gr.Markdown("*基于 Gradio 和 ModelScope API 的现代聊天界面*")
+        gr.Markdown("基于 Gradio 和 ModelScope API 的现代聊天界面")
         
         with gr.Row(equal_height=False):
             with gr.Column(scale=4):
                 chatbot = gr.Chatbot(
                     bubble_full_width=False,
-                    height=600,
+                    height=300,
                     render=False,
                     show_label=False
-                ).style()
+                )
             
             with gr.Column(scale=1):
                 with gr.Row():
@@ -129,9 +133,9 @@ def main():
             chatbot=chatbot,
             additional_inputs_accordion="⚙️ 参数设置",
             examples=[
-                "介绍一下量子计算",
-                "用Python写一个快速排序算法",
-                "分析当前全球气候变化趋势"
+                ["介绍一下量子计算", ""],
+                ["用Python写一个快速排序算法", ""],
+                ["分析当前全球气候变化趋势", ""]
             ],
             cache_examples=False
         )
@@ -180,8 +184,6 @@ def main():
     
     # 启动应用
     demo.launch(
-        server_name="0.0.0.0",
-        server_port=7860,
         share=True  # 生成可分享的公共链接
     )
 
